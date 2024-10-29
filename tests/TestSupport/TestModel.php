@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Datomatic\LaravelEnumStateMachine\Tests\TestSupport;
 
+use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\IntBackedEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\PureEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\StringBackedEnum;
-use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
 use Illuminate\Database\Eloquent\Model;
 
 /**
