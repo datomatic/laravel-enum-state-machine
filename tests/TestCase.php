@@ -1,26 +1,27 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+declare(strict_types=1);
 
-use Illuminate\Database\Eloquent\Factories\Factory;
+namespace Datomatic\LaravelEnumStateMachine\Tests;
+
+use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
+use Datomatic\LaravelEnumStateMachine\LaravelEnumStateMachineServiceProvider;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase as Orchestra;
-use VendorName\Skeleton\SkeletonServiceProvider;
 
 class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
         parent::setUp();
-
-        Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'VendorName\\Skeleton\\Database\\Factories\\'.class_basename($modelName).'Factory'
-        );
+        $this->setUpDatabase();
     }
 
     protected function getPackageProviders($app)
     {
         return [
-            SkeletonServiceProvider::class,
+            LaravelEnumStateMachineServiceProvider::class,
         ];
     }
 
@@ -29,8 +30,21 @@ class TestCase extends Orchestra
         config()->set('database.default', 'testing');
 
         /*
-        $migration = include __DIR__.'/../database/migrations/create_skeleton_table.php.stub';
+        $migration = include __DIR__.'/../database/migrations/create_laravel-enum-state-machine_table.php.stub';
         $migration->up();
         */
+    }
+    protected function setUpDatabase()
+    {
+        if (! Schema::hasTable('test_models')) {
+            Schema::create('test_models', function (Blueprint $table) {
+                $table->increments('id');
+                $table->unsignedSmallInteger('int_status')->nullable();
+                $table->string('string_status')->nullable();
+                $table->string('pure_status')->nullable();
+                $table->enum('laravel_status',LaravelEnum::values())->nullable();
+                $table->json('json')->nullable();
+            });
+        }
     }
 }
