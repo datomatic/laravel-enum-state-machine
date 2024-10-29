@@ -28,20 +28,12 @@ class TestModel extends Model
 
     protected $casts = [
         'int_status' => AsEnumStateMachine::class.':'.IntBackedEnum::class,
-        'pure_status' => AsEnumStateMachine::class.':'.PureEnum::class,
-        'string_status' => AsEnumStateMachine::class.':'.StringBackedEnum::class,
-        'laravel_status' => AsEnumStateMachine::class.':'.LaravelEnum::class,
-        'json' => 'array',
     ];
 
     public function intStatusTransitions(?IntBackedEnum $from, ?IntBackedEnum $to): bool
     {
         return match ($from) {
-            IntBackedEnum::PRIVATE => match ($to) {
-                IntBackedEnum::PROTECTED => false,
-                IntBackedEnum::PUBLIC => false,
-                default => false
-            },
+            IntBackedEnum::PRIVATE => false, //final state
             IntBackedEnum::PUBLIC => match ($to) {
                 IntBackedEnum::PRIVATE => true,
                 IntBackedEnum::PROTECTED => true,
@@ -59,11 +51,7 @@ class TestModel extends Model
     public function pureStatusTransitions(?PureEnum $from, ?PureEnum $to): bool
     {
         return match ($from) {
-            PureEnum::PRIVATE => match ($to) {
-                PureEnum::PROTECTED => false,
-                PureEnum::PUBLIC => false,
-                default => false
-            },
+            PureEnum::PRIVATE => false, //final state
             PureEnum::PUBLIC => match ($to) {
                 PureEnum::PRIVATE => true,
                 PureEnum::PROTECTED => true,
@@ -81,11 +69,7 @@ class TestModel extends Model
     public function stringStatusTransitions(?StringBackedEnum $from, ?StringBackedEnum $to): bool
     {
         return match ($from) {
-            StringBackedEnum::PRIVATE => match ($to) {
-                StringBackedEnum::PROTECTED => false,
-                StringBackedEnum::PUBLIC => false,
-                default => false
-            },
+            StringBackedEnum::PRIVATE => false, //final state
             StringBackedEnum::PUBLIC => match ($to) {
                 StringBackedEnum::PRIVATE => true,
                 StringBackedEnum::PROTECTED => true,
@@ -103,11 +87,7 @@ class TestModel extends Model
     public function laravelStatusTransitions(?LaravelEnum $from, ?LaravelEnum $to): bool
     {
         return match ($from) {
-            LaravelEnum::PRIVATE => match ($to) {
-                LaravelEnum::PROTECTED => false,
-                LaravelEnum::PUBLIC => false,
-                default => false
-            },
+            LaravelEnum::PRIVATE => false, //final state
             LaravelEnum::PUBLIC => match ($to) {
                 LaravelEnum::PRIVATE => true,
                 LaravelEnum::PROTECTED => true,
