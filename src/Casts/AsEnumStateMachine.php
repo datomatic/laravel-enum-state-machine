@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Datomatic\LaravelEnumStateMachine\Casts;
 
 use BackedEnum;
@@ -16,13 +18,12 @@ enum AsEnumStateMachine implements Castable
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
-     * @param  array  $arguments
      * @return CastsAttributes<Stringable, string|\Stringable>
      */
     public static function castUsing(array $arguments): CastsAttributes
     {
-        return new class($arguments) implements CastsAttributes {
-
+        return new class($arguments) implements CastsAttributes
+        {
             protected $arguments;
 
             public function __construct(array $arguments)
@@ -46,14 +47,14 @@ enum AsEnumStateMachine implements Castable
                 $previousValue = isset($attributes[$key]) ? $this->getEnumFromValue($attributes[$key], $enumClass) : null;
                 $newValue = $this->getEnumFromValue($value, $enumClass);
 
-                if ($previousValue === $newValue){
+                if ($previousValue === $newValue) {
                     return $value;
                 }
 
                 if (method_exists($model, $methodName)) {
                     $can = $model->$methodName($previousValue, $newValue);
 
-                    if (!$can) {
+                    if (! $can) {
                         throw new StatusTransitionDenied($previousValue->name ?? 'null', $newValue->name ?? 'null');
                     }
                 }
@@ -91,6 +92,6 @@ enum AsEnumStateMachine implements Castable
      */
     public static function of($class)
     {
-        return static::class.':'.$class;
+        return self::class.':'.$class;
     }
 }

@@ -13,14 +13,13 @@ beforeEach(function () {
     $this->testModel = new TestModel;
 });
 
-
 test('transition not permitted on pure enum', function (?UnitEnum $from, ?UnitEnum $to) {
     $this->testModel->pure_status = $from;
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->pure_status = $to)->toThrow(StatusTransitionDenied::class);
+    expect(fn () => $model->pure_status = $to)->toThrow(StatusTransitionDenied::class);
 
 })->with([
     'int enum public => null' => [PureEnum::PUBLIC, null],
@@ -37,8 +36,8 @@ test('transition permitted on pure enum', function (?UnitEnum $from, ?UnitEnum $
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->pure_status = $to)->not->toThrow(StatusTransitionDenied::class);
-    if($to instanceof UnitEnum) {
+    expect(fn () => $model->pure_status = $to)->not->toThrow(StatusTransitionDenied::class);
+    if ($to instanceof UnitEnum) {
         expect($model->pure_status)->toBe($to);
     }
 
@@ -61,7 +60,7 @@ test('transition not permitted on int backed enum', function (?UnitEnum $from, n
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->int_status = $to)->toThrow(StatusTransitionDenied::class);
+    expect(fn () => $model->int_status = $to)->toThrow(StatusTransitionDenied::class);
 
 })->with([
     'int enum public => null' => [IntBackedEnum::PUBLIC, null],
@@ -75,15 +74,14 @@ test('transition not permitted on int backed enum', function (?UnitEnum $from, n
     'int enum private => null' => [IntBackedEnum::PRIVATE, null],
 ]);
 
-
 test('transition permitted on int backed enum', function (?UnitEnum $from, null|int|UnitEnum $to) {
     $this->testModel->int_status = $from;
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->int_status = $to)->not->toThrow(StatusTransitionDenied::class);
-    if($to instanceof UnitEnum) {
+    expect(fn () => $model->int_status = $to)->not->toThrow(StatusTransitionDenied::class);
+    if ($to instanceof UnitEnum) {
         expect($model->int_status)->toBe($to);
     }
 
@@ -103,14 +101,13 @@ test('transition permitted on int backed enum', function (?UnitEnum $from, null|
     'int enum private => private' => [IntBackedEnum::PRIVATE, IntBackedEnum::PRIVATE],
 ]);
 
-
 test('transition not permitted on string backed enum', function (?UnitEnum $from, null|string|UnitEnum $to) {
     $this->testModel->string_status = $from;
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->string_status = $to)->toThrow(StatusTransitionDenied::class);
+    expect(fn () => $model->string_status = $to)->toThrow(StatusTransitionDenied::class);
 
 })->with([
     'int enum public => null' => [StringBackedEnum::PUBLIC, null],
@@ -124,15 +121,14 @@ test('transition not permitted on string backed enum', function (?UnitEnum $from
     'int enum private => null' => [StringBackedEnum::PRIVATE, null],
 ]);
 
-
 test('transition permitted on string backed enum', function (?UnitEnum $from, null|string|UnitEnum $to) {
     $this->testModel->string_status = $from;
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->string_status = $to)->not->toThrow(StatusTransitionDenied::class);
-    if($to instanceof UnitEnum) {
+    expect(fn () => $model->string_status = $to)->not->toThrow(StatusTransitionDenied::class);
+    if ($to instanceof UnitEnum) {
         expect($model->string_status)->toBe($to);
     }
 
@@ -158,7 +154,7 @@ test('transition not permitted on laravel helper enum', function (?UnitEnum $fro
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->laravel_status = $to)->toThrow(StatusTransitionDenied::class);
+    expect(fn () => $model->laravel_status = $to)->toThrow(StatusTransitionDenied::class);
 
 })->with([
     'int enum public => null' => [LaravelEnum::PUBLIC, null],
@@ -172,15 +168,14 @@ test('transition not permitted on laravel helper enum', function (?UnitEnum $fro
     'int enum private => null' => [LaravelEnum::PRIVATE, null],
 ]);
 
-
 test('transition permitted on laravel helper enum', function (?UnitEnum $from, null|int|UnitEnum $to) {
     $this->testModel->laravel_status = $from;
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn() => $model->laravel_status = $to)->not->toThrow(StatusTransitionDenied::class);
-    if($to instanceof UnitEnum) {
+    expect(fn () => $model->laravel_status = $to)->not->toThrow(StatusTransitionDenied::class);
+    if ($to instanceof UnitEnum) {
         expect($model->laravel_status)->toBe($to);
     }
 
@@ -199,5 +194,3 @@ test('transition permitted on laravel helper enum', function (?UnitEnum $from, n
     'int enum protected => private' => [LaravelEnum::PROTECTED, LaravelEnum::PRIVATE],
     'int enum private => private' => [LaravelEnum::PRIVATE, LaravelEnum::PRIVATE],
 ]);
-
-

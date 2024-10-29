@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Datomatic\LaravelEnumStateMachine\Tests\TestSupport;
 
+use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
 use Datomatic\LaravelEnumStateMachine\Casts\AsLaravelEnumCollection;
-use Datomatic\LaravelEnumStateMachine\EnumCollection;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\IntBackedEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\PureEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\StringBackedEnum;
-use Datomatic\LaravelEnumStateMachine\Traits\HasLaravelEnumStateMachine;
 use Illuminate\Database\Eloquent\Model;
-use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
 
 /**
  * @property IntBackedEnum $int_status
@@ -25,7 +23,6 @@ use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
  */
 class TestModel11 extends Model
 {
-
     protected $table = 'test_models';
 
     protected $guarded = [];
