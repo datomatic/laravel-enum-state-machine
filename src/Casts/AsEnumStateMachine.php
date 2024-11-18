@@ -20,14 +20,19 @@ enum AsEnumStateMachine implements Castable
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
+     * @param  array{class-string,bool}  $arguments
      * @return CastsAttributes<Stringable, string|\Stringable>
      */
     public static function castUsing(array $arguments): CastsAttributes
     {
         return new class($arguments) implements CastsAttributes
         {
-            protected $arguments;
+            /** @var array{class-string,bool} */
+            protected array $arguments;
 
+            /**
+             * @param  array{class-string,bool}  $arguments
+             */
             public function __construct(array $arguments)
             {
                 $this->arguments = $arguments;
@@ -35,6 +40,9 @@ enum AsEnumStateMachine implements Castable
 
             public function get(Model $model, string $key, mixed $value, array $attributes)
             {
+                /** @var null|string|int|UnitEnum $value */
+
+                /** @var class-string $enumClass */
                 $enumClass = $this->arguments[0];
 
                 return $this->getEnumFromValue($value, $enumClass);
@@ -42,37 +50,42 @@ enum AsEnumStateMachine implements Castable
 
             public function set(Model $model, string $key, mixed $value, array $attributes)
             {
+                /** @var null|string|int|UnitEnum $value */
+
                 /** @var class-string $enumClass */
                 $enumClass = $this->arguments[0];
                 $softMode = $this->arguments[1] ?? config('enum-state-machine.soft_mode');
                 $methodName = Str::camel($key).'Transitions';
 
-                $previousValue = isset($attributes[$key]) ? $this->getEnumFromValue($attributes[$key], $enumClass) : null;
-                $newValue = $this->getEnumFromValue($value, $enumClass);
+                /** @var null|string|int|UnitEnum $previousValue */
+                $previousValue = $attributes[$key] ?? null;
+                $previousEnumValue = $previousValue ? $this->getEnumFromValue($previousValue, $enumClass) : null;
+                $newEnumValue = $this->getEnumFromValue($value, $enumClass);
 
-                if ($previousValue === $newValue) {
+                if ($previousEnumValue === $newEnumValue) {
                     return $value;
                 }
 
                 if (method_exists($model, $methodName)) {
-                    $can = $model->$methodName($previousValue, $newValue);
+                    $can = $model->$methodName($previousEnumValue, $newEnumValue);
                     if (! $can) {
-                        if(! $softMode){
-                            throw new StatusTransitionDenied($previousValue->name ?? 'null', $newValue->name ?? 'null');
+                        if (! $softMode) {
+                            throw new StatusTransitionDenied($previousEnumValue->name ?? 'null', $newEnumValue->name ?? 'null');
                         }
-                        Log::error('Status Transition Denied on '.$model->getTable().' '.$model->id.' from '.($previousValue->name ?? 'null').' to '.($newValue->name ?? 'null'));
+                        Log::error('Status Transition Denied on '.$model->getTable().' '.$model->getKey().
+                            ' from '.($previousEnumValue->name ?? 'null').' to '.($newEnumValue->name ?? 'null'));
                     }
                 }
 
-                return $newValue ? $this->getStorableEnumValue($newValue) : null;
+                return $newEnumValue ? $this->getStorableEnumValue($newEnumValue) : null;
             }
 
-            protected function getStorableEnumValue($enum): int|string
+            protected function getStorableEnumValue(UnitEnum $enum): int|string
             {
                 return $enum instanceof BackedEnum ? $enum->value : $enum->name;
             }
 
-            protected function getEnumFromValue(int|string|null|UnitEnum $value, string $enumClass)
+            protected function getEnumFromValue(int|string|null|UnitEnum $value, string $enumClass): ?UnitEnum
             {
                 if ($value instanceof UnitEnum) {
                     return $value;
@@ -82,17 +95,19 @@ enum AsEnumStateMachine implements Castable
                     return null;
                 }
 
-                if(is_subclass_of($enumClass, BackedEnum::class)){
+                if (is_subclass_of($enumClass, BackedEnum::class)) {
                     $type = (string) (new ReflectionEnum($enumClass))->getBackingType();
 
-                    if($type === 'int'){
+                    if ($type === 'int') {
                         $value = (int) $value;
                     }
 
                     return $enumClass::from($value);
                 }
+                /** @var UnitEnum $enum */
+                $enum = constant($enumClass.'::'.$value);
 
-                return constant($enumClass.'::'.$value);
+                return $enum;
             }
         };
     }

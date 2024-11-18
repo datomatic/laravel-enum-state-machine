@@ -154,7 +154,7 @@ test('transition not permitted on laravel helper enum', function (?UnitEnum $fro
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(function () use($model, $to) {
+    expect(function () use ($model, $to) {
         $model->laravel_status = $to;
     })->toThrow(StatusTransitionDenied::class);
 
