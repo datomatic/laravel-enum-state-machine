@@ -28,6 +28,10 @@ class TestModel extends Model
 
     protected $casts = [
         'int_status' => AsEnumStateMachine::class.':'.IntBackedEnum::class,
+        'pure_status' => AsEnumStateMachine::class.':'.PureEnum::class,
+        'string_status' => AsEnumStateMachine::class.':'.StringBackedEnum::class.',true',
+        'laravel_status' => AsEnumStateMachine::class.':'.LaravelEnum::class,
+        'json' => 'array',
     ];
 
     public function intStatusTransitions(?IntBackedEnum $from, ?IntBackedEnum $to): bool

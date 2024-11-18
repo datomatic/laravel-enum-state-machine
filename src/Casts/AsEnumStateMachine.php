@@ -9,8 +9,10 @@ use Datomatic\LaravelEnumStateMachine\Exceptions\StatusTransitionDenied;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use ReflectionEnum;
 use UnitEnum;
 
 enum AsEnumStateMachine implements Castable
@@ -42,6 +44,7 @@ enum AsEnumStateMachine implements Castable
             {
                 /** @var class-string $enumClass */
                 $enumClass = $this->arguments[0];
+                $softMode = $this->arguments[1] ?? config('enum-state-machine.soft_mode');
                 $methodName = Str::camel($key).'Transitions';
 
                 $previousValue = isset($attributes[$key]) ? $this->getEnumFromValue($attributes[$key], $enumClass) : null;
@@ -53,16 +56,18 @@ enum AsEnumStateMachine implements Castable
 
                 if (method_exists($model, $methodName)) {
                     $can = $model->$methodName($previousValue, $newValue);
-
                     if (! $can) {
-                        throw new StatusTransitionDenied($previousValue->name ?? 'null', $newValue->name ?? 'null');
+                        if(! $softMode){
+                            throw new StatusTransitionDenied($previousValue->name ?? 'null', $newValue->name ?? 'null');
+                        }
+                        Log::error('Status Transition Denied on '.$model->getTable().' '.$model->id.' from '.($previousValue->name ?? 'null').' to '.($newValue->name ?? 'null'));
                     }
                 }
 
-                return $value ? $this->getStorableEnumValue($value) : null;
+                return $newValue ? $this->getStorableEnumValue($newValue) : null;
             }
 
-            protected function getStorableEnumValue($enum)
+            protected function getStorableEnumValue($enum): int|string
             {
                 return $enum instanceof BackedEnum ? $enum->value : $enum->name;
             }
@@ -77,9 +82,17 @@ enum AsEnumStateMachine implements Castable
                     return null;
                 }
 
-                return is_subclass_of($enumClass, BackedEnum::class)
-                    ? $enumClass::from($value)
-                    : constant($enumClass.'::'.$value);
+                if(is_subclass_of($enumClass, BackedEnum::class)){
+                    $type = (string) (new ReflectionEnum($enumClass))->getBackingType();
+
+                    if($type === 'int'){
+                        $value = (int) $value;
+                    }
+
+                    return $enumClass::from($value);
+                }
+
+                return constant($enumClass.'::'.$value);
             }
         };
     }
@@ -90,8 +103,8 @@ enum AsEnumStateMachine implements Castable
      * @param  class-string  $class
      * @return string
      */
-    public static function of($class)
+    public static function of($class, ?bool $softMode = null)
     {
-        return self::class.':'.$class;
+        return self::class.':'.$class.($softMode ? ','.$softMode : '');
     }
 }

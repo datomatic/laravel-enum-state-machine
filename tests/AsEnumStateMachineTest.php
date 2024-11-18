@@ -8,6 +8,7 @@ use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\PureEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\StringBackedEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\TestModel;
+use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
     $this->testModel = new TestModel;
@@ -20,7 +21,6 @@ test('transition not permitted on pure enum', function (?UnitEnum $from, ?UnitEn
     $model = TestModel::find($this->testModel->id);
 
     expect(fn () => $model->pure_status = $to)->toThrow(StatusTransitionDenied::class);
-
 })->with([
     'int enum public => null' => [PureEnum::PUBLIC, null],
     'int enum protected => public' => [PureEnum::PROTECTED, PureEnum::PUBLIC],
@@ -106,8 +106,8 @@ test('transition not permitted on string backed enum', function (?UnitEnum $from
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
-
-    expect(fn () => $model->string_status = $to)->toThrow(StatusTransitionDenied::class);
+    Log::shouldReceive('error')->once();
+    $model->string_status = $to;
 
 })->with([
     'int enum public => null' => [StringBackedEnum::PUBLIC, null],
@@ -154,7 +154,9 @@ test('transition not permitted on laravel helper enum', function (?UnitEnum $fro
 
     $model = TestModel::find($this->testModel->id);
 
-    expect(fn () => $model->laravel_status = $to)->toThrow(StatusTransitionDenied::class);
+    expect(function () use($model, $to) {
+        $model->laravel_status = $to;
+    })->toThrow(StatusTransitionDenied::class);
 
 })->with([
     'int enum public => null' => [LaravelEnum::PUBLIC, null],
