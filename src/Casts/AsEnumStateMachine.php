@@ -57,7 +57,7 @@ enum AsEnumStateMachine implements Castable
                 if (method_exists($model, $methodName)) {
                     $can = $model->$methodName($previousValue, $newValue);
                     if (! $can) {
-                        if(! $softMode){
+                        if (! $softMode) {
                             throw new StatusTransitionDenied($previousValue->name ?? 'null', $newValue->name ?? 'null');
                         }
                         Log::error('Status Transition Denied on '.$model->getTable().' '.$model->id.' from '.($previousValue->name ?? 'null').' to '.($newValue->name ?? 'null'));
@@ -82,10 +82,10 @@ enum AsEnumStateMachine implements Castable
                     return null;
                 }
 
-                if(is_subclass_of($enumClass, BackedEnum::class)){
+                if (is_subclass_of($enumClass, BackedEnum::class)) {
                     $type = (string) (new ReflectionEnum($enumClass))->getBackingType();
 
-                    if($type === 'int'){
+                    if ($type === 'int') {
                         $value = (int) $value;
                     }
 
