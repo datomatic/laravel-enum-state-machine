@@ -22,14 +22,14 @@ composer require datomatic/laravel-enum-state-machine
 You can publish and run the migrations with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-enum-state-machine-migrations"
+php artisan vendor:publish --tag="enum-state-machine-migrations"
 php artisan migrate
 ```
 
 You can publish the config file with:
 
 ```bash
-php artisan vendor:publish --tag="laravel-enum-state-machine-config"
+php artisan vendor:publish --tag="enum-state-machine-config"
 ```
 
 This is the contents of the published config file:
