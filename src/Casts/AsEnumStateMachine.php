@@ -20,18 +20,18 @@ enum AsEnumStateMachine implements Castable
     /**
      * Get the caster class to use when casting from / to this cast target.
      *
-     * @param  array{class-string,bool}  $arguments
+     * @param  array{class-string,?bool}  $arguments
      * @return CastsAttributes<Stringable, string|\Stringable>
      */
     public static function castUsing(array $arguments): CastsAttributes
     {
         return new class($arguments) implements CastsAttributes
         {
-            /** @var array{class-string,bool} */
+            /** @var array{class-string,?bool} */
             protected array $arguments;
 
             /**
-             * @param  array{class-string,bool}  $arguments
+             * @param  array{class-string,?bool}  $arguments
              */
             public function __construct(array $arguments)
             {
