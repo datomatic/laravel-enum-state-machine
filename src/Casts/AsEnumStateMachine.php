@@ -54,7 +54,7 @@ enum AsEnumStateMachine implements Castable
 
                 /** @var class-string $enumClass */
                 $enumClass = $this->arguments[0];
-                $softMode = $this->arguments[1] ?? config('enum-state-machine.soft_mode');
+                $softMode = $this->arguments[1] ?? config('laravel-enum-state-machine.soft_mode');
                 $methodName = Str::camel($key).'Transitions';
 
                 /** @var null|string|int|UnitEnum $previousValue */
