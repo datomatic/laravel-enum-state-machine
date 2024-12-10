@@ -19,5 +19,11 @@ class LaravelEnumStateMachineServiceProvider extends PackageServiceProvider
         $package
             ->name('laravel-enum-state-machine')
             ->hasConfigFile();
+
+
+        $this->publishes([
+            $this->package->basePath('/../stubs/LaravelEnumStateMachineModelIdeHelperHook.stub')
+            => app_path('Support/IdeHelper/LaravelEnumStateMachineModelIdeHelperHook.php'),
+        ], 'enum-state-machine-ide-helper-hooks');
     }
 }

@@ -54,6 +54,22 @@ return [
 ];
 ```
 
+
+### Using Laravel IDE Helper?
+If you are using [Laravel IDE Helper](https://github.com/barryvdh/laravel-ide-helper), you need to run the following command:
+
+```bash
+php artisan vendor:publish --tag="enum-state-machine-ide-helper-hooks"
+```
+and add `LaravelEnumStateMachineModelIdeHelperHook::class` on `model_hooks` array in `config/ide-helper.php`
+
+```php
+    'model_hooks' => [
+        ...,
+        LaravelEnumStateMachineModelIdeHelperHook::class,
+    ],
+```
+
 ## Usage
 
 Laravel enum state machine it's a simple state transitions control for enums in Laravel, this is not an implementation of state machine pattern.

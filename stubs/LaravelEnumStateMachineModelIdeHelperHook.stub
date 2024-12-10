@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Support\IdeHelper;
+
+use Arr;
+use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
+use Barryvdh\LaravelIdeHelper\Contracts\ModelHookInterface;
+use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use ReflectionClass;
+
+class LaravelEnumStateMachineModelIdeHelperHook implements ModelHookInterface
+{
+    public function run(ModelsCommand $command, Model $model): void
+    {
+        foreach ($model->getCasts() as $attribute => $cast) {
+            if (Str::contains($cast, ':') && Str::contains($cast, AsEnumStateMachine::class)) {
+
+                strtok($cast, ':');
+                $params = strtok(':');
+                $params = $params ? explode(',', $params) : [];
+
+                $nullableColumns = $this->getNullableColumns($command);
+                $types = ['\\' . $params[0]];
+                if (Arr::get($nullableColumns, $attribute, false)) {
+                    $types[] = 'null';
+                }
+
+                $command->setProperty($attribute, implode('|', $types));
+            }
+        }
+    }
+
+    protected function getNullableColumns(ModelsCommand $command): array
+    {
+        return $this->getProtectedProperty($command, 'nullableColumns');
+    }
+
+    protected function getProtectedProperty(object|string $obj, string $prop): mixed
+    {
+        $reflection = new ReflectionClass($obj);
+        $property = $reflection->getProperty($prop);
+
+        return $property->getValue($obj);
+    }
+}
