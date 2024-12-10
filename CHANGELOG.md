@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-enum-state-machine` will be documented in this file.
 
+## v0.2.0 - 2024-12-10
+
+- added Laravel IDE helper model hook
+
 ## v0.1.1 - 2024-11-18
 
 - fix the config file name
