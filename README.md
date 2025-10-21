@@ -97,7 +97,7 @@ class TestModel extends Model
     protected function casts(): array
     {
         return [
-            'field_name' => AsEnumStateMachine::of(FieldEnum::class, false),
+            'status' => AsEnumStateMachine::of(FieldEnum::class, false),
         ];
     }
 
