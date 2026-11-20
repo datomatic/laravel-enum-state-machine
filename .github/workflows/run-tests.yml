@@ -12,6 +12,9 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
+    env:
+      # Composer 2.9 blocks old releases with advisories, which breaks prefer-lowest/legacy jobs
+      COMPOSER_NO_SECURITY_BLOCKING: 1
     timeout-minutes: 5
     strategy:
       fail-fast: true
