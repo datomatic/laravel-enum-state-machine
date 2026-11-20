@@ -33,6 +33,9 @@ jobs:
         exclude:
           - laravel: 11.*
             php: 8.6
+          # Laravel 11.0 cannot bind pure enums; fails independently of the PHP version
+          - laravel: 11.*
+            stability: prefer-lowest
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
