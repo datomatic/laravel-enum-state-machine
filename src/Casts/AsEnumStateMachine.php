@@ -72,8 +72,10 @@ enum AsEnumStateMachine implements Castable
                         if (! $softMode) {
                             throw new StatusTransitionDenied($previousEnumValue->name ?? 'null', $newEnumValue->name ?? 'null');
                         }
-                        Log::error('Status Transition Denied on '.$model->getTable().' '.$model->getKey().
-                            ' from '.($previousEnumValue->name ?? 'null').' to '.($newEnumValue->name ?? 'null'));
+                        Log::error(
+                            "Status Transition Denied on {$model->getTable()} from ".($previousEnumValue->name ?? 'null').' to '.($newEnumValue->name ?? 'null'),
+                            ['key' => $model->getKey()],
+                        );
                     }
                 }
 

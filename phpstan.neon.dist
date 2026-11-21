@@ -9,5 +9,7 @@ parameters:
     tmpDir: build/phpstan
     checkOctaneCompatibility: true
     checkModelProperties: true
+    configDirectories:
+        - config
 
     editorUrl: 'phpstorm://open?file=%%file%%&line=%%line%%'
