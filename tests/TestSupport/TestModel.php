@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Datomatic\LaravelEnumStateMachine\Tests\TestSupport;
 
 use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
+use Datomatic\LaravelEnumStateMachine\Concerns\HasEnumStateMachine;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\IntBackedEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\PureEnum;
@@ -12,14 +13,15 @@ use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\StringBackedEnum;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property IntBackedEnum $int_status
- * @property PureEnum $pure_status
- * @property StringBackedEnum $string_status
- * @property LaravelEnum $laravel_status
- * @property array $json
+ * @property IntBackedEnum|null $int_status
+ * @property PureEnum|null $pure_status
+ * @property StringBackedEnum|null $string_status
+ * @property LaravelEnum|null $laravel_status
  */
 class TestModel extends Model
 {
+    use HasEnumStateMachine;
+
     protected $table = 'test_models';
 
     protected $guarded = [];
@@ -31,7 +33,6 @@ class TestModel extends Model
         'pure_status' => AsEnumStateMachine::class.':'.PureEnum::class,
         'string_status' => AsEnumStateMachine::class.':'.StringBackedEnum::class.',true',
         'laravel_status' => AsEnumStateMachine::class.':'.LaravelEnum::class,
-        'json' => 'array',
     ];
 
     public function intStatusTransitions(?IntBackedEnum $from, ?IntBackedEnum $to): bool

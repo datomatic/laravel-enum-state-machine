@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\IdeHelper;
 
-use Arr;
+use Illuminate\Support\Arr;
 use Barryvdh\LaravelIdeHelper\Console\ModelsCommand;
 use Barryvdh\LaravelIdeHelper\Contracts\ModelHookInterface;
 use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;

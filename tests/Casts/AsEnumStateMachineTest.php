@@ -8,6 +8,7 @@ use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\PureEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\StringBackedEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\TestModel;
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Log;
 
 beforeEach(function () {
@@ -106,8 +107,15 @@ test('transition not permitted on string backed enum', function (?UnitEnum $from
     $this->testModel->save();
 
     $model = TestModel::find($this->testModel->id);
-    Log::shouldReceive('error')->once();
+    $logged = [];
+    Log::listen(function (MessageLogged $message) use (&$logged) {
+        $logged[] = $message;
+    });
+
     $model->string_status = $to;
+
+    expect($logged)->toHaveCount(1)
+        ->and($logged[0]->level)->toBe('error');
 
 })->with([
     'int enum public => null' => [StringBackedEnum::PUBLIC, null],

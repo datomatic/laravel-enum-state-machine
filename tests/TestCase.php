@@ -18,24 +18,19 @@ class TestCase extends Orchestra
         $this->setUpDatabase();
     }
 
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
             LaravelEnumStateMachineServiceProvider::class,
         ];
     }
 
-    public function getEnvironmentSetUp($app)
+    protected function defineEnvironment($app): void
     {
         config()->set('database.default', 'testing');
-
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_laravel-enum-state-machine_table.php.stub';
-        $migration->up();
-        */
     }
 
-    protected function setUpDatabase()
+    protected function setUpDatabase(): void
     {
         if (! Schema::hasTable('test_models')) {
             Schema::create('test_models', function (Blueprint $table) {
@@ -44,7 +39,7 @@ class TestCase extends Orchestra
                 $table->string('string_status')->nullable();
                 $table->string('pure_status')->nullable();
                 $table->enum('laravel_status', LaravelEnum::values())->nullable();
-                $table->json('json')->nullable();
+                $table->unsignedSmallInteger('article_status')->nullable();
             });
         }
     }

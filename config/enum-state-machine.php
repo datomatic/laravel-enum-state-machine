@@ -5,17 +5,26 @@ declare(strict_types=1);
 return [
     /*
     |--------------------------------------------------------------------------
-    | Soft Mode Configuration
+    | Soft mode
     |--------------------------------------------------------------------------
     |
-    | The 'soft_mode' configuration allows for handling errors without
-    | interrupting the application's execution. When this option is enabled,
-    | no exceptions are thrown during state transitions and logged instead.
-    | This helps prevent unexpected crashes, ensuring
-    | greater application resilience, especially in scenarios where a failure
-    | in the state machine should not disrupt the main program flow.
-    | You can configure this modality for each model casting
+    | When enabled, a denied transition does not throw StatusTransitionDenied:
+    | the new value is applied and the denial is logged instead. It can be
+    | overridden on each cast: AsEnumStateMachine::of(Status::class, true).
     |
     */
-    'soft_mode' => env('LARAVEL_ENUM_STATE_MACHINE_SOFT_MODE', false),
+    'soft_mode' => (bool) env('LARAVEL_ENUM_STATE_MACHINE_SOFT_MODE', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Soft mode logging
+    |--------------------------------------------------------------------------
+    |
+    | The log channel (null for the default one) and level used to record
+    | transitions denied in soft mode.
+    |
+    */
+    'log_channel' => env('LARAVEL_ENUM_STATE_MACHINE_LOG_CHANNEL'),
+
+    'log_level' => env('LARAVEL_ENUM_STATE_MACHINE_LOG_LEVEL', 'error'),
 ];

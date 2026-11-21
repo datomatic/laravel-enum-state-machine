@@ -5,39 +5,22 @@ declare(strict_types=1);
 namespace Datomatic\LaravelEnumStateMachine\Tests\TestSupport;
 
 use Datomatic\LaravelEnumStateMachine\Casts\AsEnumStateMachine;
-use Datomatic\LaravelEnumStateMachine\Casts\AsLaravelEnumCollection;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\IntBackedEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\LaravelEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\PureEnum;
 use Datomatic\LaravelEnumStateMachine\Tests\TestSupport\Enums\StringBackedEnum;
-use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property IntBackedEnum $int_status
- * @property PureEnum $pure_status
- * @property StringBackedEnum $string_status
- * @property LaravelEnum $laravel_status
- * @property array $json
- *
- * basically used just to test the AsLaravelEnumCollection cast with laravel ^11.0 syntax
- */
-class TestModel11 extends Model
+class CastsMethodModel extends TestModel
 {
-    protected $table = 'test_models';
+    protected $casts = [];
 
-    protected $guarded = [];
-
-    public $timestamps = false;
-
-    protected function casts()
+    protected function casts(): array
     {
         return [
             'int_status' => AsEnumStateMachine::class.':'.IntBackedEnum::class.',true',
             'pure_status' => AsEnumStateMachine::class.':'.PureEnum::class.',1',
             'string_status' => AsEnumStateMachine::class.':'.StringBackedEnum::class.',false',
-            'laravel_status' => AsEnumStateMachine::class.':'.LaravelEnum::class,
-            'json' => 'array',
+            'laravel_status' => AsEnumStateMachine::of(LaravelEnum::class, false),
         ];
-
     }
 }
